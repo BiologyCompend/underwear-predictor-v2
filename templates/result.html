@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>预测结果</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background-color: #eef4f8;
+            color: #34495e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 30px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 50px 60px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 650px;
+            width: 100%;
+            border: 1px solid #e6e6e6;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 35px;
+            font-size: 2.8em;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 25px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            font-weight: 600;
+        }
+        .dice-numbers-display {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #4a90e2;
+            margin-bottom: 40px;
+            padding: 15px 25px;
+            background-color: #eaf4fd;
+            border-radius: 10px;
+            display: inline-block;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.1);
+        }
+        .result-section {
+            margin-top: 30px;
+            border-top: 2px solid #e0e0e0;
+            padding-top: 30px;
+            text-align: left;
+        }
+        .result-item {
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            line-height: 1.8;
+            padding: 10px 0;
+            border-bottom: 1px dashed #f0f0f0;
+        }
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        .palace-name {
+            font-weight: bold;
+            color: #286da8;
+            margin-right: 10px;
+        }
+        .palace-color {
+            font-style: italic;
+            color: #27ae60;
+        }
+        /* 最终颜色显示 **修改点** */
+        .final-color {
+            margin-top: 50px;
+            padding: 25px;
+            background-color: #fffbf2;
+            border: 2px solid #f5c68f;
+            border-radius: 12px;
+            animation: bounceIn 1s;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(245, 198, 143, 0.2);
+            line-height: 1.2;
+        }
+        .final-color-intro {
+            font-size: 1.3em;
+            color: #555;
+            margin-bottom: 15px;
+            display: block;
+            font-weight: 500;
+        }
+        .predicted-color-swatch {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 20px auto 20px auto;
+            border: 5px solid rgba(0,0,0,0.1);
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+        .predicted-color-swatch:hover {
+            transform: scale(1.05);
+        }
+        .predicted-color-name { /* 新增：显示颜色名称的文本样式 */
+            font-size: 2.2em;
+            font-weight: 900;
+            color: #e74c3c; /* 突出颜色名称 */
+            display: block;
+            margin-top: 15px; /* 与色块的间距 */
+        }
+        .hex-code-display { /* 新增：显示十六进制代码的文本样式 */
+            font-size: 0.9em;
+            color: #888;
+            margin-top: 5px;
+        }
+        /* 返回按钮 */
+        .back-button {
+            background-color: #6c757d;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 40px;
+            display: inline-block;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.2);
+        }
+        .back-button:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+        .disclaimer {
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #888;
+            line-height: 1.5;
+        }
+        /* 动画 */
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); opacity: 1; }
+            70% { transform: scale(0.95); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎉 预测结果 🎉</h1>
+        <div class="dice-numbers-display">
+            本次掷出的骰子点数是：{{ dice_rolls[0] }}, {{ dice_rolls[1] }}, {{ dice_rolls[2] }}
+        </div>
+
+        <div class="result-section">
+            <h2>宫位解析：</h2>
+            {% for palace in palaces %}
+                <div class="result-item">
+                    <span class="palace-name">第 {{ loop.index }} 宫位：{{ palace.name }}</span><br>
+                    <span class="palace-color">含义：{{ palace.color }}</span>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="final-color">
+            <span class="final-color-intro">古法预测，对方内裤颜色为：</span>
+
+            {% if final_color and final_color.startswith('#') %} {# 检查是否是十六进制颜色代码 #}
+                <div class="predicted-color-swatch" style="background-color: {{ final_color }};"></div>
+                <b class="predicted-color-name">{{ final_color_name }}</b> {# 显示近似颜色名 #}
+                <span class="hex-code-display">{{ final_color }}</span> {# 显示十六进制代码 #}
+            {% else %}
+                <b class="predicted-color-name">{{ final_color_name }}</b> {# 显示特殊文本，例如“没穿内裤或内裤破损” #}
+            {% endif %}
+        </div>
+
+        <a href="/" class="back-button">重新预测</a>
+
+        <p class="disclaimer"><b>温馨提示：</b>此方法仅供娱乐，请勿用于实际生活。准确率低至30%，请一笑而过！</p>
+    </div>
+</body>
+</html>
